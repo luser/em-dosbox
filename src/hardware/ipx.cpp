@@ -21,6 +21,9 @@
 
 #if C_IPX
 
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
@@ -799,6 +802,9 @@ bool ConnectToServer(char const *strAddr) {
 				ticks = GetTicks();
 
 				while(true) {
+#ifdef EMSCRIPTEN
+                                        emscripten_sleep_with_yield(1);
+#endif
 					elapsed = GetTicks() - ticks;
 					if(elapsed > 5000) {
 						LOG_MSG("Timeout connecting to server at %s", strAddr);
