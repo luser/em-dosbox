@@ -430,6 +430,7 @@ fi
 
 AH_TEMPLATE(C_MODEM,[Define to 1 to enable internal modem support, requires SDL_net])
 AH_TEMPLATE(C_IPX,[Define to 1 to enable IPX over Internet networking, requires SDL_net])
+AS_IF([test "x$enable_emscripten" != "xyes"],[
 AC_CHECK_HEADER(SDL_net.h,have_sdl_net_h=yes,)
 
 if test x$with_sdl2 = "xyes" ; then
@@ -449,6 +450,10 @@ if test x$host = xi386-pc-os2-emx ; then
 else
 AC_CHECK_LIB(${LIBSDL_HEADER}_net, SDLNet_Init, have_sdl_net_lib=yes, , )
 fi
+], [
+  have_sdl_net_h=yes
+  have_sdl_net_lib=yes
+])
 if test x$have_sdl_net_lib = xyes -a x$have_sdl_net_h = xyes ; then
    LIBS="$LIBS -l${LIBSDL_HEADER}_net"
    AC_DEFINE(C_MODEM,1)
@@ -602,8 +607,8 @@ AS_IF([test "x$enable_emscripten" = "xyes"],[
   AS_IF([test "x$enable_sync" != "xno"], [AC_DEFINE([EMTERPRETER_SYNC],[1])])
   AS_IF([test "x$with_sdl2" != "xno"],[
     AS_IF([test "x$with_sdl2" = "xyes"],
-      [CXXFLAGS="$CXXFLAGS -s USE_SDL=2"],
-      [LIBS="$LIBS -L$with_sdl2/build/.libs/ -lSDL2"
+      [CXXFLAGS="$CXXFLAGS -s USE_SDL=2 -s USE_SDL_NET=2 -s SOCKET_WEBRTC=1"],
+      [LIBS="$LIBS -L$with_sdl2/build/.libs/ -lSDL2 -lSDL2_net"
        CXXFLAGS="$CXXFLAGS -Wno-warn-absolute-paths -I$with_sdl2/include"
     ])
   ])
